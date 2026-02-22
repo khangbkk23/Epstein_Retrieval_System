@@ -21,13 +21,13 @@ except Exception as e:
     rag_engine = None
 
 def home_view(request):
-    return render(request, 'home.html')
+    return render(request, 'rag_service/home.html')
 
 def contact_view(request):
-    return render(request, 'contact.html')
+    return render(request, 'rag_service/contact.html')
 
 def app_view(request):
-    return render(request, 'app.html')
+    return render(request, 'rag_service/app.html')
 
 @csrf_exempt
 def chat_endpoint(request):

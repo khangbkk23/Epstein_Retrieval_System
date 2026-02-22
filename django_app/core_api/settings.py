@@ -1,8 +1,47 @@
 import os
 from pathlib import Path
-DEBUG = True
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = 'django-insecure-epstein-rag-system-secret-key'
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['*']
+
+# Frame options for Hugging Face Spaces embedding
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.hf.space',
+    'https://*.huggingface.co',
+]
+
+# Application definition
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # Custom Application
+    'rag_service',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'core_api.urls'
+WSGI_APPLICATION = 'core_api.wsgi.application'
+
+# Template configuration
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -19,23 +58,18 @@ TEMPLATES = [
     },
 ]
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Static files
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-ALLOWED_HOSTS = ['*']
-
-X_FRAME_OPTIONS = 'SAMEORIGIN'
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.hf.space',
-    'https://*.huggingface.co',
-]
-
-# Xác định file urls.py gốc của toàn bộ dự án
-ROOT_URLCONF = 'django_app.core_api.urls'
-
-# Xác định ứng dụng WSGI để chạy server
-WSGI_APPLICATION = 'core_api.wsgi.application'
