@@ -33,3 +33,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.hf.space',
     'https://*.huggingface.co',
 ]
+
+# Xác định file urls.py gốc của toàn bộ dự án
+ROOT_URLCONF = 'django_app.core_api.urls'
+
+# Xác định ứng dụng WSGI để chạy server
+WSGI_APPLICATION = 'core_api.wsgi.application'
