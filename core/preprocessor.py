@@ -45,6 +45,7 @@ if __name__ == "__main__":
     sample_noisy_text = """
     CONFIDENTIAL MEMORANDUM
     
+    
     This is highly con-
     fidential infor- mation regarding the event.
     There are   too many \t spaces here.
