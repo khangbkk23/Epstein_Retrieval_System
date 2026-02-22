@@ -1,36 +1,52 @@
-from attr import dataclass
 import yaml
-from pydantic import BaseModel
+import os
+from pydantic import BaseModel, Field
 
-@dataclass
 class DatasetConfig(BaseModel):
     name: str
-    index_dir: str
+    split: str = "train"
+    streaming: bool = True
 
-@dataclass
-class ChunkingConfig(BaseModel):
-    chunk_size: int
-    chunk_overlap: int
-    
-@dataclass
+class StorageConfig(BaseModel):
+    index_dir: str
+    metadata_path: str
+
+class ProcessingConfig(BaseModel):
+    chunk_size: int = Field(gt=0, description="Kích thước tối đa của mỗi chunk")
+    chunk_overlap: int = Field(ge=0, description="Độ gối lên nhau giữa các chunk")
+    min_length: int = Field(ge=0, description="Độ dài tối thiểu để giữ lại chunk")
+    batch_size: int = Field(gt=0, description="Số lượng chunk xử lý đồng thời")
+
 class EmbeddingConfig(BaseModel):
     model_name: str
-    vector_dimension: int
+    dimension: int = Field(gt=0, description="Số chiều của vector")
     device: str
-    batch_size: int
+    normalize: bool = True
+
+class RetrievalConfig(BaseModel):
+    top_k: int = Field(gt=0, description="Số lượng kết quả truy xuất")
+    score_threshold: float = Field(ge=0.0, le=1.0, description="Ngưỡng điểm tương đồng")
 
 class AppConfig(BaseModel):
     dataset: DatasetConfig
-    chunking: ChunkingConfig
+    storage: StorageConfig
+    processing: ProcessingConfig
     embedding: EmbeddingConfig
+    retrieval: RetrievalConfig
     
     @classmethod
     def load_from_yaml(cls, path: str = "../config.yaml") -> "AppConfig":
-        with open(path, 'r') as f:
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Cannot find config file at {path}")
+            
+        with open(path, 'r', encoding='utf-8') as f:
             yaml_data = yaml.safe_load(f)
+            
         return cls(**yaml_data)
-    
 
 settings = AppConfig.load_from_yaml()
-        
-    
+
+if __name__ == "__main__":
+    print(f"Dataset name: {settings.dataset.name}")
+    print(f"Embedding model: {settings.embedding.model_name}")
+    print(f"Storage path: {settings.storage.index_dir}")
