@@ -1,13 +1,12 @@
 import json
 import os
 import logging
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
-from django.shortcuts import render
 
 from core.graph_engine import AgenticRAGEngine
-
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -21,15 +20,14 @@ except Exception as e:
     logger.error(f"Failed to load RAG Engine: {e}")
     rag_engine = None
 
-
 def home_view(request):
-    return render(request, 'rag_service/home.html')
+    return render(request, 'home.html')
 
 def contact_view(request):
-    return render(request, 'rag_service/contact.html')
+    return render(request, 'contact.html')
 
 def app_view(request):
-    return render(request, 'rag_service/app.html')
+    return render(request, 'app.html')
 
 @csrf_exempt
 def chat_endpoint(request):
@@ -56,9 +54,9 @@ def chat_endpoint(request):
             }, status=200)
 
         except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+            return JsonResponse({"Error": "Invalid JSON payload."}, status=400)
         except Exception as e:
             logger.error(f"Error processing query: {e}")
             return JsonResponse({"error": "Internal server error processing your query."}, status=500)
             
-    return JsonResponse({"error": "Method not allowed. Use POST."}, status=405)
+    return JsonResponse({"Error": "Method not allowed. Use POST."}, status=405)

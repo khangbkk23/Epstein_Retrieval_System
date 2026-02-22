@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+DEBUG = True
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMPLATES = [
@@ -24,3 +24,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+ALLOWED_HOSTS = ['*']
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.hf.space',
+    'https://*.huggingface.co',
+]
