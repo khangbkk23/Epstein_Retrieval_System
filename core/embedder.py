@@ -2,7 +2,7 @@ import logging
 import numpy as np
 from typing import List
 from sentence_transformers import SentenceTransformer
-from core.config import settings
+from config import settings
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
