@@ -4,7 +4,7 @@ import pickle
 import logging
 import numpy as np
 from typing import List, Dict, Any, Tuple
-from config import settings
+from core.config import settings
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

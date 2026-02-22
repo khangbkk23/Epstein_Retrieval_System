@@ -2,7 +2,7 @@ import re
 import logging
 from typing import List
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from config import settings
+from core.config import settings
 
 logger = logging.getLogger(__name__)
 
