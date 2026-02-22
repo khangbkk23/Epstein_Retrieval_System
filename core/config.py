@@ -35,7 +35,7 @@ class AppConfig(BaseModel):
     retrieval: RetrievalConfig
     
     @classmethod
-    def load_from_yaml(cls, path: str = "../config.yaml") -> "AppConfig":
+    def load_from_yaml(cls, path: str = "./conf/config.yaml") -> "AppConfig":
         if not os.path.exists(path):
             raise FileNotFoundError(f"Cannot find config file at {path}")
             
