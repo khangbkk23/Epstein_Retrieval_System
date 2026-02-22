@@ -22,7 +22,7 @@ def run_inference():
 
     try:
         engine = AgenticRAGEngine(llm_api_key=api_key)
-        test_question = "What information is available regarding offshore transfers or financial records?"
+        test_question = "Are there any information about Donald Trump?"
         
         logger.info(f"USER QUERY: '{test_question}'")
         final_answer = engine.run(test_question)
