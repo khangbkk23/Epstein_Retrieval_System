@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authOverlay.classList.add('hidden');
     }
 
-    // Execution Flow 1: Handle Login & JWT Issuance
+    // Execution flow 1: Handle login & JWT issuance
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const passcode = passcodeIn.value.trim();
