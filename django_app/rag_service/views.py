@@ -63,33 +63,43 @@ def login_endpoint(request):
     
 @csrf_exempt
 def chat_endpoint(request):
-    if request.method == "POST":
-        if not rag_engine:
-            return JsonResponse({"error": "System is currently unavailable (Engine failed to load)."}, status=503)
+    if request.method != "POST":
+        return JsonResponse({"Error": "Method not allowed. Use POST."}, status=405)
 
-        try:
-            body = json.loads(request.body)
-            question = body.get("question", "").strip()
-            # password = body.get("password", "").strip()
-            
-            if not question:
-                return JsonResponse({"error": "Question field cannot be empty."}, status=400)
+    if not rag_engine:
+        return JsonResponse({"error": "System is currently unavailable."}, status=503)
 
-            logger.info(f"API Received Question: {question}")
-            
-            # Execute the LangGraph workflow
-            answer = rag_engine.run(question)
-            
-            return JsonResponse({
-                "question": question,
-                "answer": answer,
-                "status": "success"
-            }, status=200)
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return JsonResponse({"error": "Missing or invalid Authorization header."}, status=401)
 
-        except json.JSONDecodeError:
-            return JsonResponse({"Error": "Invalid JSON payload."}, status=400)
-        except Exception as e:
-            logger.error(f"Error processing query: {e}")
-            return JsonResponse({"error": "Internal server error processing your query."}, status=500)
-            
-    return JsonResponse({"Error": "Method not allowed. Use POST."}, status=405)
+    token = auth_header.split(' ')[1]
+    
+    try:
+        decoded_payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        return JsonResponse({"error": "Token has expired. Please login again."}, status=401)
+    except jwt.InvalidTokenError:
+        return JsonResponse({"error": "Invalid token signature."}, status=401)
+
+    try:
+        body = json.loads(request.body)
+        question = body.get("question", "").strip()
+
+        if not question:
+            return JsonResponse({"error": "Question field cannot be empty."}, status=400)
+
+        logger.info(f"API Received Question: {question}")
+        answer = rag_engine.run(question)
+        
+        return JsonResponse({
+            "question": question,
+            "answer": answer,
+            "status": "success"
+        }, status=200)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+    except Exception as e:
+        logger.error(f"Error processing query: {e}")
+        return JsonResponse({"error": "Internal server error processing your query."}, status=500)
