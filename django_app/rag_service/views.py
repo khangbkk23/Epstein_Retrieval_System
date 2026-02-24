@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")
 
+JWT_SECRET = settings.
 try:
     logger.info("Initializing AgenticRAGEngine for Django App...")
     rag_engine = AgenticRAGEngine(llm_api_key=API_KEY)
