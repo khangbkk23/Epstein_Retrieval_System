@@ -1,6 +1,8 @@
 import json
 import os
 import logging
+import datetime
+import jwt
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +14,10 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")
 
-JWT_SECRET = settings.
+JWT_SECRET = settings.SECRET_KEY
+
+JWT_ALGORITHM = 'HS256'
+SYSTEM_PASSCODE = 'dikhang_rag_demo'
 try:
     logger.info("Initializing AgenticRAGEngine for Django App...")
     rag_engine = AgenticRAGEngine(llm_api_key=API_KEY)
@@ -30,6 +35,32 @@ def contact_view(request):
 def app_view(request):
     return render(request, 'rag_service/app.html')
 
+
+@csrf_exempt
+def login_endpoint(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+        
+    try:
+        body = json.loads(request.body)
+        passcode = body.get("passcode", "").strip()
+        
+        if passcode == SYSTEM_PASSCODE:
+            payload = {
+                'user': 'guest_user',
+                'exp': datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1),
+                'iat': datetime.now(datetime.timezone.utc)
+            }
+            token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+            
+            return JsonResponse({"token": token, "message": "Authentication successful"}, status=200)
+        else:
+            return JsonResponse({"error": "Invalid passcode."}, status=401)
+            
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}")
+        return JsonResponse({"error": "Server error during authentication."}, status=500)
+    
 @csrf_exempt
 def chat_endpoint(request):
     if request.method == "POST":
