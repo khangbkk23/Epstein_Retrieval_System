@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
-
+from django.conf import settings
 from core.graph_engine import AgenticRAGEngine
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,11 @@ API_KEY = os.getenv("OPENAI_API_KEY")
 JWT_SECRET = settings.SECRET_KEY
 
 JWT_ALGORITHM = 'HS256'
-SYSTEM_PASSCODE = 'dikhang_rag_demo'
+
+SYSTEM_PASSCODE = os.getenv("APP_PASSCODE")
+
+if not SYSTEM_PASSCODE:
+    logger.warning("CRITICAL SECURITY WARNING: APP_PASSCODE is not set in environment variables!")
 try:
     logger.info("Initializing AgenticRAGEngine for Django App...")
     rag_engine = AgenticRAGEngine(llm_api_key=API_KEY)
@@ -48,8 +52,8 @@ def login_endpoint(request):
         if passcode == SYSTEM_PASSCODE:
             payload = {
                 'user': 'guest_user',
-                'exp': datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1),
-                'iat': datetime.now(datetime.timezone.utc)
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+                'iat': datetime.datetime.utcnow()
             }
             token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
             
