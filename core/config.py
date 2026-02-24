@@ -1,7 +1,7 @@
 import yaml
 import os
 from pydantic import BaseModel, Field
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class DatasetConfig(BaseModel):
     name: str
     split: str = "train"
@@ -35,12 +35,21 @@ class AppConfig(BaseModel):
     retrieval: RetrievalConfig
     
     @classmethod
-    def load_from_yaml(cls, path: str = "./conf/config.yaml") -> "AppConfig":
+    def load_from_yaml(cls, path: str = None) -> "AppConfig":
+        if path is None:
+            path = os.path.join(BASE_DIR, "conf", "config.yaml")
+            
         if not os.path.exists(path):
             raise FileNotFoundError(f"Cannot find config file at {path}")
             
         with open(path, 'r', encoding='utf-8') as f:
             yaml_data = yaml.safe_load(f)
+            
+        index_dir = yaml_data['storage']['index_dir'].replace('./', '')
+        metadata_path = yaml_data['storage']['metadata_path'].replace('./', '')
+        
+        yaml_data['storage']['index_dir'] = os.path.join(BASE_DIR, index_dir)
+        yaml_data['storage']['metadata_path'] = os.path.join(BASE_DIR, metadata_path)
             
         return cls(**yaml_data)
 

@@ -3,7 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-epstein-rag-system-secret-key'
+SECRET_KEY = 'toi_ten_la_khang_123'
 
 DEBUG = True
 

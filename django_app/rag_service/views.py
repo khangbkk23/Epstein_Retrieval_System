@@ -38,7 +38,8 @@ def chat_endpoint(request):
         try:
             body = json.loads(request.body)
             question = body.get("question", "").strip()
-
+            # password = body.get("password", "").strip()
+            
             if not question:
                 return JsonResponse({"error": "Question field cannot be empty."}, status=400)
 
