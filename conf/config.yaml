@@ -1,0 +1,25 @@
+dataset:
+  name: "teyler/epstein-files-20k"
+  split: "train"
+  streaming: true
+
+storage:
+  index_dir: "./data/faiss_index"
+  metadata_path: "./data/faiss_index/metadata.pkl"
+
+processing:
+  chunk_size: 1500
+  chunk_overlap: 200
+  min_length: 50
+  batch_size: 64
+
+embedding:
+  model_name: "BAAI/bge-large-en-v1.5"
+  dimension: 1024
+  device: "cpu"
+  normalize: true
+
+retrieval:
+  top_k: 20
+  score_threshold: 0.65
+  rerank_top_k: 5

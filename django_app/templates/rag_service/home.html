@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-16 p-8 bg-white shadow-xl rounded-xl border border-gray-100">
+    <h1 class="text-4xl font-extrabold text-slate-800 mb-6 tracking-tight">Production-Scale RAG Pipeline</h1>
+    <p class="text-gray-600 text-lg mb-4 leading-relaxed">
+        This project demonstrates an end-to-end Agentic RAG system built on 2 million+ pages of real-world, noisy OCR data from the Epstein files.
+    </p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+        <div class="p-6 bg-slate-50 border border-slate-200 rounded-lg hover:shadow-md transition duration-300">
+            <h3 class="font-bold text-xl text-blue-600 mb-3">Data Engineering</h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>Streaming ingestion via HF Datasets</li>
+                <li>Regex-based OCR noise cleaning</li>
+                <li>Batch vectorization with GPU acceleration</li>
+            </ul>
+        </div>
+        <div class="p-6 bg-slate-50 border border-slate-200 rounded-lg hover:shadow-md transition duration-300">
+            <h3 class="font-bold text-xl text-blue-600 mb-3">Agentic Inference</h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>FAISS HNSW Indexing for Sub-ms latency</li>
+                <li>LangGraph query routing & grading</li>
+                <li>Hallucination prevention with rewrite loops</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="mt-12 text-center">
+        <a href="{% url 'app' %}" class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition shadow-lg font-bold text-lg">Launch the Search Engine</a>
+    </div>
+</div>
+{% endblock %}
