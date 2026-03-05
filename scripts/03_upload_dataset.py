@@ -20,7 +20,7 @@ def upload_database_to_hf():
         return
 
     api = HfApi()
-    DATASET_REPO_ID = "khangbkk23/epstein-rag-portfolio"
+    DATASET_REPO_ID = "khangbkk23/epstein-faiss-database"
 
     faiss_path = "./data/faiss_index/vector_index.faiss"
     metadata_path = "./data/faiss_index/metadata.pkl"

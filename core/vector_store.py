@@ -5,6 +5,7 @@ import logging
 import numpy as np
 from typing import List, Dict, Any, Tuple
 from core.config import settings
+from huggingface_hub import hf_hub_download
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -52,17 +53,37 @@ class VectorStore:
 
     def load(self):
         index_file = os.path.join(self.index_dir, "vector_index.faiss")
-        if not os.path.exists(index_file) or not os.path.exists(self.metadata_path):
-            logger.error("Index or metadata files not found.")
-            raise FileNotFoundError("Run the indexing script before loading.")
+        metadata_file = self.metadata_path
 
-        logger.info(f"Loading FAISS index from {index_file}...")
+        if not os.path.exists(index_file) or not os.path.exists(metadata_file):
+            logger.warning("Didn't find local FAISS Index. Starting download from Hugging Face Dataset...")
+            os.makedirs(self.index_dir, exist_ok=True)
+
+            dataset_repo_id = "khangbkk23/epstein-faiss-database" 
+            
+            try:
+                hf_hub_download(
+                    repo_id=dataset_repo_id, 
+                    filename="vector_index.faiss",
+                    repo_type="dataset",
+                    local_dir=self.index_dir
+                )
+                # Kéo tệp Metadata
+                hf_hub_download(
+                    repo_id=dataset_repo_id, 
+                    filename="metadata.pkl",
+                    repo_type="dataset",
+                    local_dir=self.index_dir
+                )
+                logger.info("Downloaded FAISS index and metadata successfully from Hugging Face Dataset.")
+            except Exception as e:
+                logger.error(f"{e}")
+                raise FileNotFoundError("Failed to download FAISS index and metadata from Hugging Face Dataset. Please check your network connection and Hugging Face credentials.")
+
         self.index = faiss.read_index(index_file)
-        
         with open(self.metadata_path, 'rb') as f:
             self.metadata = pickle.load(f)
-            
-        logger.info(f"Loaded index with {self.index.ntotal} vectors onto CPU.")
+        logger.info(f"Complete submit {self.index.ntotal} vectors in to model.")
 
     def search(self, query_vector: np.ndarray) -> List[Tuple[Dict[str, Any], float]]:
         top_k = settings.retrieval.top_k
