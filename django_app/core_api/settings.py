@@ -1,9 +1,11 @@
 import os
 from pathlib import Path
-
+from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'toi_ten_dikhangbkk23'
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback-secret-for-local-dev-only')
 
 DEBUG = True
 

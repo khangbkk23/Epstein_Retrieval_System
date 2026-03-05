@@ -14,15 +14,16 @@ def run_inference():
     logger.info("STARTING AGENTIC RAG INFERENCE")
     
     load_dotenv()
-    api_key = os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     
     if not api_key:
-        logger.error("OPENAI_API_KEY not found")
+        logger.error("GROQ_API_KEY not found")
         sys.exit(1)
 
     try:
         engine = AgenticRAGEngine(llm_api_key=api_key)
-        test_question = "Are there any information about president of countries?"
+        # test_question = "What are the specific addresses or locations of the properties owned by Jeffrey Epstein mentioned in the records?"
+        test_question = "Extract and list the specific names of passengers or pilots explicitly mentioned in the flight logs context. Do not use general terms."
         
         logger.info(f"USER QUERY: '{test_question}'")
         final_answer = engine.run(test_question)

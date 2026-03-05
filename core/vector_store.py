@@ -62,15 +62,21 @@ class VectorStore:
         with open(self.metadata_path, 'rb') as f:
             self.metadata = pickle.load(f)
             
-        logger.info(f"Loaded index with {self.index.ntotal} vectors.")
+        logger.info(f"Loaded index with {self.index.ntotal} vectors onto CPU.")
 
-    def search(self, query_vector: np.ndarray, top_k: int = 5) -> List[Tuple[Dict[str, Any], float]]:
+    def search(self, query_vector: np.ndarray) -> List[Tuple[Dict[str, Any], float]]:
+        top_k = settings.retrieval.top_k
+        score_threshold = settings.retrieval.score_threshold
+        rerank_top_k = settings.retrieval.rerank_top_k
 
         query_fp32 = np.asarray(query_vector, dtype=np.float32).reshape(1, -1)
         distances, indices = self.index.search(query_fp32, top_k)
         
         results = []
         for dist, idx in zip(distances[0], indices[0]):
-            if idx != -1:
+            if idx != -1 and float(dist) >= score_threshold:
                 results.append((self.metadata[idx], float(dist)))
+
+        results = sorted(results, key=lambda x: x[1], reverse=True)[:rerank_top_k]
+        
         return results

@@ -26,6 +26,7 @@ class EmbeddingConfig(BaseModel):
 class RetrievalConfig(BaseModel):
     top_k: int = Field(gt=0, description="Số lượng kết quả truy xuất")
     score_threshold: float = Field(ge=0.0, le=1.0, description="Ngưỡng điểm tương đồng")
+    rerank_top_k: int = Field(gt=0, description="Số lượng kết quả sau khi rerank")
 
 class AppConfig(BaseModel):
     dataset: DatasetConfig

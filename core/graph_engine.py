@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 from typing import List, TypedDict, Dict, Any
 from langgraph.graph import StateGraph, END
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from pydantic import BaseModel, Field
 
 from core.vector_store import VectorStore
@@ -29,8 +29,8 @@ class AgenticRAGEngine:
         self.vector_store.load()
         self.embedder = VectorEmbedder()
         
-        self.evaluator_llm = ChatOpenAI(api_key=llm_api_key, model="gpt-4o-mini", temperature=0)
-        self.generator_llm = ChatOpenAI(api_key=llm_api_key, model="gpt-4o-mini", temperature=0.3)
+        self.evaluator_llm = ChatGroq(api_key=llm_api_key, model="llama-3.1-8b-instant", temperature=0)
+        self.generator_llm = ChatGroq(api_key=llm_api_key, model="llama-3.1-8b-instant", temperature=0.3)
         
         # Build the Graph
         self.workflow = self._build_graph()
@@ -40,8 +40,9 @@ class AgenticRAGEngine:
         question = state["question"]
         attempts = state.get("search_attempts", 0)
         question_vector = self.embedder.embed_batch([question])[0]
-        results = self.vector_store.search(question_vector, top_k=5)
         
+        results = self.vector_store.search(question_vector)
+            
         documents = [res[0] for res in results]
         
         return {"documents": documents, "question": question, "search_attempts": attempts + 1}
